@@ -5,9 +5,9 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from telebot import types
 
 
-VIPCODE3 = '7511001126:AAH1xo5NEdmoEC1mEA4eQx7Mcj9TEHqGVpk'
-ch = 'TranQuan'
-ID = '6940071938'
+VIPCODE3 = '7511001126:AÂH1xo5NEdmoEC1mEA4eQx7Mcj9TEHqGVpk'
+ch = 'tranquan46'
+ID = '-1002370805497'
 ADMIN = [6940071938, 0]
 
 
@@ -72,7 +72,7 @@ def not_subscrip(message, invite_link):
             text=f'''
 ❕ | Xin lỗi, bạn {na}
 ❗️ | Bạn cần tham gia kênh của nhà phát triển trước
-❕ | Tham gia rồi gửi /infotiktok lại nhé
+❕ | Tham gia rồi gửi /start lại nhé
 ==========================
 🔗 - {invite_link}
 ==========================
@@ -93,7 +93,7 @@ def not_subscrip1(call, invite_link):
             text=f'''
 ❕ | Xin lỗi, bạn {na}
 ❗️ | Bạn cần tham gia kênh của nhà phát triển trước
-❕ | Tham gia rồi gửi /infotiktok lại nhé
+❕ | Tham gia rồi gửi /start lại nhé
 ==========================
 🔗 - {invite_link}
 ==========================
@@ -104,7 +104,7 @@ def not_subscrip1(call, invite_link):
         zo.clear_step_handler(call.message)
 
 
-@zo.message_handler(commands=['infotiktok'])
+@zo.message_handler(commands=['start'])
 def vip1 (ms):
     is_subscribed, channel = subscs(ms.from_user.id)
 
@@ -114,14 +114,12 @@ def vip1 (ms):
     name = f"[{ms.from_user.first_name}](tg://{ms.from_user.id})"
     text = f'''
 🤖 ¦ Xin chào {name}, tôi là bot dò tìm thông tin.
-⚡️ ¦ Tôi có thể lấy thông tin tài khoản
-🎭 ¦ từ tất cả các mạng xã hội.
+⚡️ ¦ Tôi có thể giúp bạn khám phá thông tin.
+🎭 ¦ Sử dụng lệnh /infott <username tiktok> để xem thông tin TikTok
     '''
     zeco = InlineKeyboardMarkup()
-    tek = InlineKeyboardButton("• TikTok •", callback_data='TEK')
     z1 = InlineKeyboardButton("• Kênh nhà phát triển •", url=f"https://t.me/{ch}")
     z2 = InlineKeyboardButton("• Nhà phát triển •", url=f"https://t.me/{us}")
-    zeco.add(tek)
     zeco.add(z1, z2)
     zo.reply_to(ms, text,
     reply_markup=zeco,
@@ -138,14 +136,12 @@ def vip11(call):
     name = f"[{call.from_user.first_name}](tg://{call.from_user.id})"
     text = f'''
 🤖 ¦ Xin chào {name}, tôi là bot dò tìm thông tin.
-⚡️ ¦ Tôi có thể lấy thông tin tài khoản
-🎭 ¦ từ tất cả các mạng xã hội.
+⚡️ ¦ Tôi có thể giúp bạn khám phá thông tin.
+🎭 ¦ Sử dụng lệnh /infott <username tiktok> để xem thông tin TikTok
     '''
     zeco = telebot.types.InlineKeyboardMarkup()
-    tek = telebot.types.InlineKeyboardButton("• TikTok •", callback_data='TEK')
     z1 = telebot.types.InlineKeyboardButton("• Kênh nhà phát triển •", url=f"https://t.me/{ch}")
     z2 = telebot.types.InlineKeyboardButton("• Nhà phát triển •", url=f"https://t.me/{us}")
-    zeco.add(tek)
     zeco.add(z1, z2)
     zo.edit_message_text(
         chat_id=call.message.chat.id,
@@ -157,31 +153,33 @@ def vip11(call):
     zo.clear_step_handler(call.message)
 
 
-@zo.callback_query_handler(func=lambda call: call.data == 'TEK')
-def vip2(call):
-    is_subscribed, channel = subscs(call.from_user.id)
+@zo.message_handler(commands=['infott'])
+def infott_command(ms):
+    is_subscribed, channel = subscs(ms.from_user.id)
 
     if not is_subscribed:
-        not_subscrip1(call, channel)
+        not_subscrip(ms, channel)
         return
-    text = '''
-    🤖 ¦ Vui lòng nhập username TikTok của bạn
-💢 ¦ để lấy thông tin tài khoản:
+
+    username_parts = ms.text.split()
+    if len(username_parts) < 2:
+        zo.reply_to(ms, "Vui lòng sử dụng cú pháp: /infott <username>")
+        return
+
+    username = username_parts[1].strip()
+
+    text = f'''
+    🤖 ¦ Vui lòng chờ, bot đang lấy thông tin
+💢 ¦ Username TikTok: {username}
     '''
     zeco = InlineKeyboardMarkup()
     back = InlineKeyboardButton("• Trở lại •", callback_data='Bak')
     zeco.add(back)
-    zo.edit_message_text(
-        chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
-        text=text,
-        reply_markup=zeco
-    )
-    zo.register_next_step_handler(call.message, tik)
+    sent_msg = zo.reply_to(ms, text, reply_markup=zeco) # Store sent message to edit later
+    tik(sent_msg, username) # Pass the sent message and username to tik function
 
 
-def tik(ms):
-    username = ms.text.strip()
+def tik(ms, username): # Modified tik function to accept message object and username
     api = f"https://tik-batbyte.vercel.app/tiktok?username={username}"
     try:
         response = requests.get(api)
@@ -214,11 +212,29 @@ def tik(ms):
 • Tiểu sử ↢ {zecora3}
 ''')
 
-            zo.send_photo(ms.chat.id, data['profile_picture'], caption=caption, parse_mode='Markdown', reply_markup=zeco)
+            zo.edit_message_media(
+                chat_id=ms.chat.id,
+                message_id=ms.message_id,
+                media=types.InputMediaPhoto(data['profile_picture'], caption=caption, parse_mode='Markdown'),
+                reply_markup=zeco
+            )
+
         else:
-            zo.send_message(ms.chat.id, f"*• Không tìm thấy thông tin tài khoản ↢* {username}", parse_mode='Markdown')
+            zo.edit_message_text(
+                chat_id=ms.chat.id,
+                message_id=ms.message_id,
+                text=f"*• Không tìm thấy thông tin tài khoản ↢* {username}",
+                parse_mode='Markdown',
+                reply_markup=zeco
+            )
     except requests.RequestException as e:
-        zo.send_message(ms.chat.id, f"Có lỗi xảy ra: {str(e)}", parse_mode='Markdown')
+        zo.edit_message_text(
+            chat_id=ms.chat.id,
+            message_id=ms.message_id,
+            text=f"Có lỗi xảy ra: {str(e)}",
+            parse_mode='Markdown',
+            reply_markup=zeco
+        )
 
 
 @zo.message_handler(commands=['admin'])
