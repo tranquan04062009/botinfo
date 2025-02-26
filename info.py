@@ -5,7 +5,7 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from telebot import types
 
 
-VIPCODE3 = '7511001126:AÂH1xo5NEdmoEC1mEA4eQx7Mcj9TEHqGVpk'
+VIPCODE3 = '7511001126:AAH1xo5NEdmoEC1mEA4eQx7Mcj9TEHqGVpk'
 ch = 'tranquan46'
 ID = '6940071938'
 ADMIN = [6940071938, 0]
