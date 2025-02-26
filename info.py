@@ -72,7 +72,7 @@ def not_subscrip(message, invite_link):
             text=f'''
 ❕ | Xin lỗi, bạn {na}
 ❗️ | Bạn cần tham gia kênh của nhà phát triển trước
-❕ | Tham gia rồi gửi /start lại nhé
+❕ | Tham gia rồi gửi /infotiktok lại nhé
 ==========================
 🔗 - {invite_link}
 ==========================
@@ -93,7 +93,7 @@ def not_subscrip1(call, invite_link):
             text=f'''
 ❕ | Xin lỗi, bạn {na}
 ❗️ | Bạn cần tham gia kênh của nhà phát triển trước
-❕ | Tham gia rồi gửi /start lại nhé
+❕ | Tham gia rồi gửi /infotiktok lại nhé
 ==========================
 🔗 - {invite_link}
 ==========================
@@ -104,7 +104,7 @@ def not_subscrip1(call, invite_link):
         zo.clear_step_handler(call.message)
 
 
-@zo.message_handler(commands=['start'])
+@zo.message_handler(commands=['infotiktok'])
 def vip1 (ms):
     is_subscribed, channel = subscs(ms.from_user.id)
 
